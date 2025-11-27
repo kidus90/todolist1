@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   fabPlus: {
     color: "#fff",
-    fontSize: 42,
+    fontSize: 39,
     fontWeight: "bold",
     marginTop: -12,
     marginLeft: -3,
