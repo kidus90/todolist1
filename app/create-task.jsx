@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity, View, Alert } from 'react-native'
 import CustomButton from '../components/Button'
-import InputText from '../components/InputText'
+import CustomInputText from '../components/InputText'
 import CustomText from '../components/Text'
 
 const Create_task = () => {
@@ -12,12 +12,37 @@ const Create_task = () => {
   const [startTIme, setStartTime] = useState('09:00 AM')
   const [endTime, setEndTime] = useState('11:00 AM')
   const [Description, setDescription] = useState('')
+  const handleSubmit = () => {
+    const title = 'task submitted'
+    const message = ` task Name: ${taskName}\n Category: ${category}\n Date: ${date}\n Start Time: ${startTIme}\n End Time: ${endTime}\n Description: ${Description}`
+    Alert.alert(title, message, [
+      {text: 'Cancel', style: 'cancel'},
+      { 
+        text: 'OK', onPress: () => {
+        setTaskName('');
+        setCategory(categories[0]);
+        setDate('05 April, Tuesday');
+        setStartTime('09:00 AM');
+        setEndTime('11:00 AM');
+        setDescription('')
+      }
+    },
+    { text: 'Yes', onPress: () => {
+        setTaskName('');
+        setCategory(categories[0]);
+        setDate('05 April, Tuesday');
+        setStartTime('09:00 AM');
+        setEndTime('11:00 AM');
+        setDescription('')
+      } }
 
+    ])
+  }
   return (
     <ScrollView style={styles.container}>
       <View>
         <CustomText style={styles.label}>Task Name</CustomText>
-        <InputText 
+        <CustomInputText 
           style={styles.input} 
           placeholder='Task Name' 
           value={taskName}
@@ -44,7 +69,7 @@ const Create_task = () => {
 
         <View>
           <CustomText style={styles.label}>Date</CustomText>
-          <InputText
+          <CustomInputText
             style={styles.input}
             placeholder={date}
             value={date}
@@ -58,7 +83,7 @@ const Create_task = () => {
           {/* hold the outer container in column for start*/}
           <View style={{width: '48%'}}>
             <CustomText style={styles.label}>Start Time</CustomText>
-            <InputText
+            <CustomInputText
               style={styles.input}
               placeholder={startTIme}
               value={startTIme}
@@ -69,7 +94,7 @@ const Create_task = () => {
           {/* hold the outer container in column for end*/}
           <View style={{width: '48%'}}>
             <CustomText style={styles.label}>End Time</CustomText>
-            <InputText
+            <CustomInputText
               style={styles.input}
               placeholder={endTime}
               value={endTime}
@@ -80,7 +105,7 @@ const Create_task = () => {
 
         <View>
           <CustomText style={styles.label}>Description</CustomText>
-          <InputText
+          <CustomInputText
             style={[styles.input, {paddingVertical: 30, alignItemss: 'flex-start'}]}
             placeholder='Description'
             value={Description}
@@ -89,7 +114,7 @@ const Create_task = () => {
         </View>
 
       </View>
-      <CustomButton style={styles.createBtn} title='Create Task'/>
+      <CustomButton style={styles.createBtn} onPress={handleSubmit} title='Create Task'/>
     </ScrollView>
 
   )
