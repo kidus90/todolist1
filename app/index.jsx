@@ -1,19 +1,65 @@
 import { useRouter } from "expo-router";
 
-import { StyleSheet, View } from 'react-native';
-
+import { FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
+import { useState, useEffect } from "react";
 import { Notification01Icon, Search01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import CustomButton from '../components/Button';
 import CustomInputText from "../components/InputText";
 import CustomText from '../components/Text';
+import CustomCard from '../components/Card'
 
+let taskStore = [
+  {
+    id: "1",
+    title: "UI Design",
+    time: "09:00 AM - 11:00 AM",
+    category: "personal",
+    description: "Designing UI for the new app.",
+  },
+  {
+    id: "2",
+    title: "Web Development",
+    time: "11:30 AM - 12:30 PM",
+    category: "work",
+    description: "Developing the company website.",
+  },
+  {
+    id: "3",
+    title: "Office Meeting",
+    time: "02:00 PM - 03:00 PM",
+    category: "Work",
+    description: "Monthly team meeting.",
+  },
+  {
+    id: "4",
+    title: "Shopping",
+    time: "03:30 PM - 05:00 PM",
+    category: "shopping",
+    description: "Buy groceries and supplies.",
+  },
+];
 
 
 export default function Index() {
   const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState(true);
+  const categories=['All', 'Personal', 'Work', 'Shopping']
+  const [search, setSearch] = useState("");
 
-  // const [search, setSearch] = react.useState("")
+  const [tasks, setTasks]= useState([]);
+  useEffect(()=> {
+    setTasks([...taskStore]);
+  },[]);
+
+  const filteredTasks =
+  selectedCategory === "All"
+    ? tasks
+    : tasks.filter(
+      (t) => t.category.toLowerCase() === selectedCategory.toLowerCase()
+    );
+
+
   return (
     <View style={styles.container}>
       <View style={styles.topSection}>
@@ -30,12 +76,78 @@ export default function Index() {
             <HugeiconsIcon icon={Search01Icon} size={20} color="#b0b0b0" style={{marginRight: 8}} />
             <CustomInputText
               placeholder="Search task"
-              // value={search}
-              // onChangeText={setSearch}
+              value={search}
+              onChangeText={setSearch}
               style={styles.searchText}
               />
         </View>
       </View>
+      <View style={styles.progrescard2}>
+
+        <View style={styles.taskHeaderRow}>
+          <CustomText>All Activity</CustomText>
+            <TouchableOpacity>
+              <CustomText style={styles.seeAll}>See More</CustomText>
+            </TouchableOpacity>
+        </View>
+
+        <View style={styles.filterBar}>
+          <FlatList
+            data={categories}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item)=> item}
+            renderItem ={({item}) => (
+              <TouchableOpacity
+                style={[
+                  styles.filterChip,
+                  selectedCategory === item && styles.filterChipSelected,
+                ]}
+                onPress={()=> setSelectedCategory(item)}
+                activeOpacity={0.7}>
+               <CustomText
+               style={[
+                styles.filterChipText,
+                selectedCategory === item && styles.filterChipTextSelected 
+                
+
+               ]}
+               >{item}</CustomText>
+              </TouchableOpacity>
+            )}
+          contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 8}}
+          />
+        </View>
+
+      </View>
+          <FlatList
+            data={filteredTasks}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.taskItemTouchable}
+              >
+                <CustomCard style={styles.taskCard}>
+                  <View style={styles.taskContentColumn}>
+                    <View style={styles.taskTitleRow}>
+                      <CustomText style={styles.taskTitle}>
+                        {item.title}
+                      </CustomText>
+                    </View>
+                    <CustomText style={styles.taskCategory}>
+                      {item.category}
+                    </CustomText>
+                  </View>
+                  <CustomText style={styles.taskTime}>{item.time}</CustomText>
+                </CustomCard>
+                <CustomText style={styles.descriptionText}>
+                  {item.description}
+                </CustomText>
+              </TouchableOpacity>
+            )}
+          />
+
       <CustomButton
         title="+"
         onPress={() => router.push("/create-task")}
@@ -50,7 +162,7 @@ export default function Index() {
 
 
 const styles = StyleSheet.create({
-container: {
+ container: {
     flex: 1,
     backgroundColor: "#f7faff",
     paddingHorizontal: 0,
@@ -67,7 +179,7 @@ container: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-
+    marginTop: 8,
     marginBottom: 18,
   },
   iconCircle: {
@@ -85,10 +197,10 @@ container: {
   },
 
   greeting: {
-    fontSize: 22,
-    marginBottom: 18,
+    marginTop: -14,
+    marginBottom: 16,
     textAlign: "center",
-    color: "#ffffffff"
+
   },
   searchBar: {
     flexDirection: "row",
@@ -147,7 +259,7 @@ container: {
     backgroundColor: "#f5f5f5ff",
     borderRadius: 20,
     paddingHorizontal: 18,
-    paddingVertical: 8,
+    paddingVertical: 6,
     marginRight: 10,
     marginBottom: 2,
   },
@@ -207,8 +319,8 @@ container: {
   },
   fab: {
     position: "absolute",
-    right: 32,
-    bottom: 32,
+    right: 12,
+    bottom: 52,
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -224,5 +336,20 @@ container: {
     fontWeight: "bold",
     marginTop: -12,
     marginLeft: -3,
+  },
+  taskItemTouchable: {
+    marginBottom: 12,
+  },
+  taskContentColumn: {
+    flexDirection: "column",
+    flex: 1,
+  },
+  descriptionText: {
+    color: "#888",
+    fontSize: 13,
+    marginTop: 2,
+  },
+  iconRight: {
+    marginLeft: 8,
   },
 });
